@@ -6,6 +6,22 @@
 
 (def all? (partial every? true?))
 
+
+;; Write a function which creates a list of all integers in a given range.
+(defn p34 [?hmm?]
+  [(= (?hmm? 1 4) '(1 2 3))
+   (= (?hmm? -2 2) '(-2 -1 0 1))
+   (= (?hmm? 5 8) '(5 6 7))])
+(t/deftest p34-test
+  (t/testing "p34"
+    (let [f (fn f [from upto]
+              {:pre (<= from upto)}
+              (loop [n from, acc []]
+                (if (< n upto)
+                  (recur (inc n) (conj acc n))
+                  acc)))]
+     (t/is (all? (p34 f))))))
+
 (defn p57 [?hmm?]
   (= ?hmm?
      ((fn foo [x]
