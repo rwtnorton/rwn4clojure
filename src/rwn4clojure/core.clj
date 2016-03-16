@@ -26,3 +26,17 @@
               (boolean (and (find m k)
                             (nil? (get m k)))))]
      (t/is (every? true? (p134 f))))))
+
+;; In Clojure, only nil and false represent the values of logical
+;; falsity in conditional tests - anything else is logical truth.
+(defn p162 [?hmm?]
+  [(= ?hmm? (if-not false 1 0))
+   (= ?hmm? (if-not nil 1 0))
+   (= ?hmm? (if true 1 0))
+   (= ?hmm? (if [] 1 0))
+   (= ?hmm? (if [0] 1 0))
+   (= ?hmm? (if 0 1 0))
+   (= ?hmm? (if 1 1 0))])
+(t/deftest p162-test
+  (t/testing "p162"
+    (t/is ((partial every? true?) (p162 1)))))
