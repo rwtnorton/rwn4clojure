@@ -27,7 +27,25 @@
     (let [f (fn [k m]
               (boolean (and (find m k)
                             (nil? (get m k)))))]
-     (t/is (all? (p134 f))))))
+      (t/is (all? (p134 f))))))
+
+;; When retrieving values from a map, you can specify default values
+;; in case the key is not found:
+;;   (= 2 (:foo {:bar 0, :baz 1} 2))
+;; However, what if you want the map itself to contain the default
+;; values? Write a function which takes a default value and a sequence
+;; of keys and constructs a map.
+(defn p156 [?hmm?]
+  [(= (?hmm? 0 [:a :b :c]) {:a 0 :b 0 :c 0})
+   (= (?hmm? "x" [1 2 3]) {1 "x" 2 "x" 3 "x"})
+   (= (?hmm? [:a :b] [:foo :bar]) {:foo [:a :b] :bar [:a :b]})])
+(t/deftest p156-test
+  (t/testing "p156"
+    (let [f (fn [v ks]
+              (->> (for [k ks]
+                     [k v])
+                   (into {})))]
+     (t/is (all? (p156 f))))))
 
 ;; Set A is a subset of set B, or equivalently B is a superset of A,
 ;; if A is "contained" inside B. A and B may coincide.
