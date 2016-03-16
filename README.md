@@ -1,10 +1,6 @@
 # rwn4clojure
 
-A Clojure library designed to ... well, that part is up to you.
-
-## Usage
-
-FIXME
+Solutions for http://www.4clojure.com/ .
 
 ## License
 
