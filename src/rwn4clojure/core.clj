@@ -4,6 +4,8 @@
 (defn test-all []
   (t/run-tests *ns*))
 
+(def all? (partial every? true?))
+
 (defn p57 [?hmm?]
   (= ?hmm?
      ((fn foo [x]
@@ -25,7 +27,18 @@
     (let [f (fn [k m]
               (boolean (and (find m k)
                             (nil? (get m k)))))]
-     (t/is (every? true? (p134 f))))))
+     (t/is (all? (p134 f))))))
+
+;; Set A is a subset of set B, or equivalently B is a superset of A,
+;; if A is "contained" inside B. A and B may coincide.
+(defn p161 [?hmm?]
+  [(clojure.set/superset? ?hmm? #{2})
+   (clojure.set/subset? #{1} ?hmm?)
+   (clojure.set/superset? ?hmm? #{1 2})
+   (clojure.set/subset? #{1 2} ?hmm?)])
+(t/deftest p161-test
+  (t/testing "p161"
+    (t/is (all? (p161 #{1 2})))))
 
 ;; In Clojure, only nil and false represent the values of logical
 ;; falsity in conditional tests - anything else is logical truth.
@@ -39,4 +52,4 @@
    (= ?hmm? (if 1 1 0))])
 (t/deftest p162-test
   (t/testing "p162"
-    (t/is ((partial every? true?) (p162 1)))))
+    (t/is (all? (p162 1)))))
