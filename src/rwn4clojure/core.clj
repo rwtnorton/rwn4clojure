@@ -223,6 +223,38 @@
               (= front-half back-half)))]
     (is (all? (p27 f)))))
 
+(defn p28 [__]
+  [(= (__ '((1 2) 3 [4 [5 6]])) '(1 2 3 4 5 6))
+   (= (__ ["a" ["b"] "c"]) '("a" "b" "c"))
+   (= (__ '((((:a))))) '(:a))])
+(deftest t28
+  (let [f (fn [form]
+            (let [todo (atom [form])
+                  result (atom [])]
+              (while (seq @todo)
+                (let [curr (peek @todo)]
+                  (swap! todo pop)
+                  (if (sequential? curr)
+                    (doseq [kid (reverse curr)]
+                      (swap! todo conj kid))
+                    (swap! result conj curr))))
+              @result))
+        #_(fn [form]
+            (->> (clojure.zip/zipper sequential? seq (fn [_ c] c) form)
+                 (iterate clojure.zip/next)
+                 (take-while (complement clojure.zip/end?))
+                 (map clojure.zip/node)
+                 (remove sequential?)))
+        #_(fn f [form]
+            (loop [curr form, todo [], acc []]
+              (if (sequential? curr)
+                (apply conj acc (map f curr))
+                #_(if (seq curr)
+                  (recur (rest curr) (conj acc (first curr)))
+                  (recur (rest curr) acc))
+                (conj acc curr))))]
+    (is (all? (p28 f)))))
+
 (defn p29 [__]
   [(= (__ "HeLlO, WoRlD!") "HLOWRD")
    (empty? (__ "nothing"))
