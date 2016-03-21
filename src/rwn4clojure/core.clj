@@ -465,6 +465,14 @@
             (fn [a b] (f b a)))]
     (is (all? (p46 f)))))
 
+(defn p47 [__]
+  [(contains? #{4 5 6} __)
+   (contains? [1 1 1 1 1] __)
+   (contains? {4 :a 2 :b} __)
+   (not (contains? [1 2 4] __))])
+(deftest t47
+  (is (all? (p47 4))))
+
 (defn p48 [__]
   [(= __ (some #{2 7 6} [5 6 7 8]))
    (= __ (some #(when (even? %) %) [5 6 7 8]))])
