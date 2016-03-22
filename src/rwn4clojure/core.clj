@@ -521,6 +521,16 @@
 (deftest t57
   (is (p57 '(5 4 3 2 1))))
 
+(defn p61 [__]
+  [(= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
+   (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
+   (= (__ [:foo :bar] ["foo" "bar" "baz"]) {:foo "foo", :bar "bar"})])
+(deftest t61
+  (let [f (fn f [ks vs]
+            (->> (map vector ks vs)
+                 (into {})))]
+    (is (all? (p61 f)))))
+
 (defn p64 [__]
   [(= 15 (reduce __ [1 2 3 4 5]))
    (=  0 (reduce __ []))
