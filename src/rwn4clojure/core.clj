@@ -859,3 +859,16 @@
    (= __ (if 1 1 0))])
 (deftest t162
   (is (all? (p162 1))))
+
+(defn p166 [__]
+  [(= :gt (__ < 5 1))
+   (= :eq (__ (fn [x y] (< (count x) (count y))) "pear" "plum"))
+   (= :lt (__ (fn [x y] (< (mod x 5) (mod y 5))) 21 3))
+   (= :gt (__ > 0 2))])
+(deftest t166
+  (let [f (fn [cmp v1 v2]
+            (cond
+              (cmp v1 v2) :lt
+              (cmp v2 v1) :gt
+              :else :eq))]
+    (is (all? (p166 f)))))
