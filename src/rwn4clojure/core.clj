@@ -612,6 +612,30 @@
                  set))]
     (is (all? (p77 f)))))
 
+(defn p81 [__]
+  [(= (__ #{0 1 2 3} #{2 3 4 5}) #{2 3})
+   (= (__ #{0 1 2} #{3 4 5}) #{})
+   (= (__ #{:a :b :c :d} #{:c :e :a :f :d}) #{:a :c :d})])
+(deftest t81
+  (let [f (fn [set1 set2]
+            (reduce (fn [acc v]
+                      (if (set2 v)
+                        (conj acc v)
+                        acc))
+                    #{}
+                    set1)
+            #_(loop [acc #{}, noms set1, over set2]
+              (if (seq noms)
+                (let [v (first noms)
+                      nomd (disj noms v)]
+                  (recur (if (over v)
+                           (conj acc v)
+                           acc)
+                         nomd
+                         over))
+                acc)))]
+    (is (all? (p81 f)))))
+
 (defn p83 [__]
   [(= false (__ false false))
    (= true (__ true false))
