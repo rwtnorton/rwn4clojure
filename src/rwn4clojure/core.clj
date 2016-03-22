@@ -479,6 +479,20 @@
 (deftest t48
   (is (all? (p48 6))))
 
+(defn p49 [__]
+  [(= (__ 3 [1 2 3 4 5 6]) [[1 2 3] [4 5 6]])
+   (= (__ 1 [:a :b :c :d]) [[:a] [:b :c :d]])
+   (= (__ 2 [[1 2] [3 4] [5 6]]) [[[1 2] [3 4]] [[5 6]]])])
+(deftest t49
+  (let [f (fn f [n vs]
+            (loop [n n, hd [], tl (seq vs)]
+              (if (zero? n)
+                [hd tl]
+                (recur (dec n)
+                       (conj hd (first tl))
+                       (rest tl)))))]
+    (is (all? (p49 f)))))
+
 (defn p50 [__]
   [(= (set (__ [1 :a 2 :b 3 :c])) #{[1 2 3] [:a :b :c]})
    (= (set (__ [:a "foo"  "bar" :b])) #{[:a :b] ["foo" "bar"]})
