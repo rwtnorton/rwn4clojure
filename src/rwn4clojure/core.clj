@@ -835,6 +835,33 @@
               (reduce * (repeat exponent base))))]
     (is (all? (p107 f)))))
 
+(defn p122 [__]
+  [(= 0     (__ "0"))
+   (= 7     (__ "111"))
+   (= 8     (__ "1000"))
+   (= 9     (__ "1001"))
+   (= 255   (__ "11111111"))
+   (= 1365  (__ "10101010101"))
+   (= 65535 (__ "1111111111111111"))])
+(deftest t122
+  (let [g (fn [x]
+            (->> (/ (Math/log (inc x)) (Math/log 2))
+                 Math/ceil
+                 long
+                 (max 1)
+                 range
+                 (map (fn [i] (bit-test x i)))
+                 (map {true \1, false \0})
+                 reverse
+                 clojure.string/join))
+        f (fn [s]
+            (->> s
+                 (map {\1 1, \0 0})
+                 (reduce (fn [acc b]
+                           (+' (*' 2 acc) b))
+                         0)))]
+    (is (all? (p122 f)))))
+
 ;; Write a function which, given a key and map, returns true
 ;; iff the map contains an entry with that key and its value is nil.
 (defn p134 [__]
