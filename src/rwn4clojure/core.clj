@@ -862,6 +862,13 @@
                          0)))]
     (is (all? (p122 f)))))
 
+(defn p126 [__]
+  (let [x __]
+    (and (= (class x) x)
+         x)))
+(deftest t126
+  (is (p126 java.lang.Class)))
+
 ;; Write a function which, given a key and map, returns true
 ;; iff the map contains an entry with that key and its value is nil.
 (defn p134 [__]
