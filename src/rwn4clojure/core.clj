@@ -2,7 +2,7 @@
   (:require [clojure.test :refer :all]))
 
 (defn test-all []
-  (t/run-tests *ns*))
+  (run-tests *ns*))
 
 (def all? (partial every? true?))
 
