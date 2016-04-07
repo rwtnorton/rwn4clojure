@@ -531,6 +531,15 @@
                  (into {})))]
     (is (all? (p61 f)))))
 
+(defn p62 [__]
+  [(= (take 5 (__ #(* 2 %) 1)) [1 2 4 8 16])
+   (= (take 100 (__ inc 0)) (take 100 (range)))
+   (= (take 9 (__ #(inc (mod % 3)) 1)) (take 9 (cycle [1 2 3])))])
+(deftest t62
+  (let [f (fn f [g x]
+            (lazy-seq (cons x (f g (g x)))))]
+    (is (all? (p62 f)))))
+
 (defn p64 [__]
   [(= 15 (reduce __ [1 2 3 4 5]))
    (=  0 (reduce __ []))
