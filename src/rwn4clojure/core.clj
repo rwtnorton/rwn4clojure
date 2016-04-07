@@ -540,6 +540,22 @@
             (lazy-seq (cons x (f g (g x)))))]
     (is (all? (p62 f)))))
 
+(defn p63 [__]
+  [(= (__ #(> % 5) [1 3 6 8])
+      {false [1 3], true [6 8]})
+   (= (__ #(apply / %) [[1 2] [2 4] [4 6] [3 6]])
+      {1/2 [[1 2] [2 4] [3 6]], 2/3 [[4 6]]})
+   (= (__ count [[1] [1 2] [3] [1 2 3] [2 3]])
+      {1 [[1] [3]], 2 [[1 2] [2 3]], 3 [[1 2 3]]})])
+(deftest t63
+  (let [f (fn [g vs]
+            (reduce
+             (fn [acc v]
+               (update-in acc [(g v)] (fnil conj []) v))
+             {}
+             vs))]
+    (is (all? (p63 f)))))
+
 (defn p64 [__]
   [(= 15 (reduce __ [1 2 3 4 5]))
    (=  0 (reduce __ []))
