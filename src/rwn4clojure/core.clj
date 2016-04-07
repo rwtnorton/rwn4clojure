@@ -881,6 +881,28 @@
                           (nil? (get m k)))))]
     (is (all? (p134 f)))))
 
+(defn p135 [__]
+  [(= 7  (__ 2 + 5))
+   (= 42 (__ 38 + 48 - 2 / 2))
+   (= 8  (__ 10 / 2 - 1 * 2))
+   (= 72 (__ 20 / 2 + 2 + 4 + 8 - 6 - 10 * 9))])
+(deftest t135
+  (let [f (fn [& vs]
+            {:pre [(odd? (count vs))
+                   (every? fn?
+                           (->> (map-indexed vector vs)
+                                (filter (fn [[i _]] (odd? i)))
+                                (map second)))
+                   (every? number?
+                           (->> (map-indexed vector vs)
+                                (filter (fn [[i _]] (even? i)))
+                                (map second)))]}
+            (reduce (fn [acc [op x]]
+                      (op acc x))
+                    (first vs)
+                    (->> (rest vs) (partition 2))))]
+    (is (all? (p135 f)))))
+
 (defn p143 [__]
   [(= 0 (__ [0 1 0] [1 0 0]))
    (= 3 (__ [1 1 1] [1 1 1]))
