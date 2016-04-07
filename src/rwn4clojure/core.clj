@@ -770,6 +770,21 @@
               (nth pascal n)))]
     (is (all? (p97 f)))))
 
+(defn p99 [__]
+  [(= (__ 1 1) [1])
+   (= (__ 99 9) [8 9 1])
+   (= (__ 999 99) [9 8 9 0 1])])
+(deftest t99
+  (let [f (fn [& xs]
+            (let [n (apply *' xs)]
+              (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                   (take-while (fn [vs] (some (complement zero?) vs)))
+                   (map second)
+                   rest
+                   reverse
+                   (into []))))]
+   (is (all? (p99 f)))))
+
 (defn p100 [__]
   [(== (__ 2 3) 6)
    (== (__ 5 3 7) 105)
