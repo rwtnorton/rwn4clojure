@@ -1,0 +1,8 @@
+#!/bin/bash
+set -eu
+cd "$(dirname $0)/.."
+exec perl -Mstrict -Mwarnings -le '
+    my $n = 0;
+    while (<>) { chomp; ++$n if /^\s*\(defn\s+p\d+/ }
+    print $n;
+' src/rwn4clojure/core.clj
