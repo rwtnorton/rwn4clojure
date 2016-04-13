@@ -944,6 +944,17 @@
                  (into {})))]
     (is (all? (p156 f)))))
 
+(defn p157 [__]
+  [(= (__ [:a :b :c]) [[:a 0] [:b 1] [:c 2]])
+   (= (__ [0 1 3]) '((0 0) (1 1) (3 2)))
+   (= (__ [[:foo] {:bar :baz}]) [[[:foo] 0] [{:bar :baz} 1]])])
+(deftest t157
+  (let [f (fn [vs]
+            (->> vs
+                 (map-indexed vector)
+                 (map reverse)))]
+    (is (all? (p157 f)))))
+
 ;; Set A is a subset of set B, or equivalently B is a superset of A,
 ;; if A is "contained" inside B. A and B may coincide.
 (defn p161 [__]
