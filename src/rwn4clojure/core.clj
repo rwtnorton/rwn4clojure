@@ -835,6 +835,23 @@
               (reduce * (repeat exponent base))))]
     (is (all? (p107 f)))))
 
+(defn p118 [__]
+  [(= [3 4 5 6 7]
+      (__ inc [2 3 4 5 6]))
+   (= (repeat 10 nil)
+      (__ (fn [_] nil) (range 10)))
+   (= [1000000 1000001]
+      (->> (__ inc (range))
+           (drop (dec 1000000))
+           (take 2)))])
+(deftest t118
+  (let [f (fn f [g vs]
+            (if (seq vs)
+              (lazy-seq (cons (g (first vs))
+                              (f g (rest vs))))
+              vs))]
+    (is (all? (p118 f)))))
+
 (defn p122 [__]
   [(= 0     (__ "0"))
    (= 7     (__ "111"))
