@@ -852,6 +852,41 @@
               vs))]
     (is (all? (p118 f)))))
 
+;; Write a function which takes a collection of integers as an argument.
+;; Return the count of how many elements are smaller than the sum of
+;; their squared component digits. For example: 10 is larger than 1
+;; squared plus 0 squared; whereas 15 is smaller than 1 squared plus
+;; 5 squared.
+(defn p120 [__]
+  [(= 8 (__ (range 10)))
+   (= 19 (__ (range 30)))
+   (= 50 (__ (range 100)))
+   (= 50 (__ (range 1000)))])
+(deftest t120
+  (let [f
+        (fn [ns]
+          (let [->digits
+                (fn [n]
+                  (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                       (take-while (fn [vs] (some (complement zero?) vs)))
+                       (map second)
+                       rest
+                       reverse
+                       (into [])))
+
+                sumsq-of-digits
+                (fn [n]
+                  (->> n
+                       ->digits
+                       (map (fn [x] (*' x x)))
+                       (apply +')))]
+
+              (->> ns
+                   (map (fn [n] [n (sumsq-of-digits n)]))
+                   (filter (fn [[n sumsq]] (< n sumsq)))
+                   count)))]
+    (is (all? (p120 f)))))
+
 (defn p122 [__]
   [(= 0     (__ "0"))
    (= 7     (__ "111"))
