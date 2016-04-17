@@ -1077,3 +1077,11 @@
               (cmp v2 v1) :gt
               :else :eq))]
     (is (all? (p166 f)))))
+
+(defn p173 []
+  (= 3
+     (let [[op v] [+ (range 3)]] (apply op v))
+     (let [[[op v] b] [[+ 1] 2]] (op v b))
+     (let [[op v] [inc 2]] (op v))))
+(deftest t173
+  (is (p173)))
