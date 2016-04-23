@@ -1075,6 +1075,77 @@
               (iterate successor vs)))]
     (is (all? (p147 f)))))
 
+;; Given a set of sets, create a function which returns true if no two
+;; of those sets have any elements in common1 and false otherwise.
+;; Some of the test cases are a bit tricky, so pay a little more
+;; attention to them.
+;;
+;; 1 Such sets are usually called pairwise disjoint or mutually disjoint.
+(defn p153 [__]
+  [(= (__ #{#{\U} #{\s} #{\e \R \E} #{\P \L} #{\.}})    ;; 1
+      true)
+   (= (__ #{#{:a :b :c :d :e}                           ;; 2
+            #{:a :b :c :d}
+            #{:a :b :c}
+            #{:a :b}
+            #{:a}})
+      false)
+   (= (__ #{#{[1 2 3] [4 5]}                            ;; 3
+            #{[1 2] [3 4 5]}
+            #{[1] [2] 3 4 5}
+            #{1 2 [3 4] [5]}})
+      true)
+   (= (__ #{#{'a 'b}                                    ;; 4
+            #{'c 'd 'e}
+            #{'f 'g 'h 'i}
+            #{''a ''c ''f}})
+      true)
+   (= (__ #{#{'(:x :y :z) '(:x :y) '(:z) '()}
+            #{#{:x :y :z} #{:x :y} #{:z} #{}}
+            #{'[:x :y :z] [:x :y] [:z] [] {}}})
+      false)
+   (= (__ #{#{(= "true") false}
+            #{:yes :no}
+            #{(class 1) 0}
+            #{(symbol "true") 'false}
+            #{(keyword "yes") ::no}
+            #{(class '1) (int \0)}})
+      false)
+   (= (__ #{#{distinct?}
+            #{#(-> %) #(-> %)}
+            #{#(-> %) #(-> %) #(-> %)}
+            #{#(-> %) #(-> %) #(-> %)}})
+      true)
+   (= (__ #{#{(#(-> *)) + (quote mapcat) #_ nil}
+            #{'+ '* mapcat (comment mapcat)}
+            #{(do) set contains? nil?}
+            #{, , , #_, , empty?}})
+      false)])
+(deftest t153
+  (let [f (fn [vs]
+            (->> vs
+                 (map (fn [a-set]
+                        (->> a-set
+                             (map (fn [v]
+                                    (if (or (seq? v) (set? v))
+                                      (vec v)
+                                      v)))
+                             (into #{}))))
+                 (into #{})
+                 (reduce (partial clojure.set/intersection))
+                 empty?))
+        g (fn [the-sets]
+            (let [other-sets (fn [a-set]
+                               (->> (disj the-sets a-set)
+                                    (apply clojure.set/union)))]
+              (->> the-sets
+                   (map (fn [a-set]
+                          [a-set (other-sets a-set)]))
+                   (every? (fn [[a-set remainder]]
+                             (->> (clojure.set/intersection a-set remainder)
+                                  empty?))))))]
+    (is (all? (p153 g)))))
+
 ;; When retrieving values from a map, you can specify default values
 ;; in case the key is not found:
 ;;   (= 2 (:foo {:bar 0, :baz 1} 2))
