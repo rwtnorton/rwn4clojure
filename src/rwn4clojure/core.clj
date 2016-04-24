@@ -525,6 +525,32 @@
                  (into {})))]
     (is (all? (p55 f)))))
 
+;; Write a function which removes the duplicates from a sequence. Order
+;; of the items must be maintained.
+(defn p56 [__]
+  [(= (__ [1 2 1 3 1 2 4]) [1 2 3 4])
+   (= (__ [:a :a :b :b :c :c]) [:a :b :c])
+   (= (__ '([2 4] [1 2] [1 3] [1 3])) '([2 4] [1 2] [1 3]))
+   (= (__ (range 50)) (range 50))])
+(deftest t56
+  (let [f (fn [vs]
+            (loop [vs' vs, seen #{}, acc []]
+              (if (seq vs')
+                (let [v (first vs')]
+                  (if (seen v)
+                    (recur (rest vs') seen acc)
+                    (recur (rest vs') (conj seen v) (conj acc v))))
+                acc)))
+        g (fn [vs]
+            (reduce (fn [acc v]
+                      (let [seen (set acc)]
+                        (if (seen v)
+                          acc
+                          (conj acc v))))
+                    []
+                    vs))]
+    (is (all? (p56 g)))))
+
 (defn p57 [__]
   (= __
      ((fn foo [x]
