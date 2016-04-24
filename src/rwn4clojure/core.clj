@@ -512,6 +512,19 @@
   (declare c e) ;; hacks
   (is (p52 [c e])))
 
+(defn p55 [__]
+  [(= (__ [1 1 2 3 2 1 1]) {1 4, 2 2, 3 1})
+   (= (__ [:b :a :b :a :b]) {:a 2, :b 3})
+   (= (__ '([1 2] [1 3] [1 3])) {[1 2] 1, [1 3] 2})])
+(deftest t55
+  (let [f (fn [vs]
+            (->> vs
+                 (group-by (set vs))
+                 (map (fn [[k v]]
+                        [k (count v)]))
+                 (into {})))]
+    (is (all? (p55 f)))))
+
 (defn p57 [__]
   (= __
      ((fn foo [x]
