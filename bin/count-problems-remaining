@@ -1,0 +1,5 @@
+#!/bin/bash
+set -eu
+cd "$(dirname $0)/.."
+bin/count-problems-attempted \
+|perl -Mstrict -Mwarnings -le 'chomp(my $n = <>); print 156 - $n;'
