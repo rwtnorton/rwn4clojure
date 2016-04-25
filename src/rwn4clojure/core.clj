@@ -560,6 +560,32 @@
 (deftest t57
   (is (p57 '(5 4 3 2 1))))
 
+;; Write a function which allows you to create function compositions.
+;; The parameter list should take a variable number of functions, and
+;; create a function that applies them from right-to-left.
+(defn p58 [__]
+  [(= [3 2 1] ((__ rest reverse) [1 2 3 4]))
+   (= 5 ((__ (partial + 3) second) [1 2 3 4]))
+   (= true ((__ zero? #(mod % 8) +) 3 5 7 9))
+   (= "HELLO" ((__ #(.toUpperCase %) #(apply str %) take) 5 "hello world"))])
+(deftest t58
+  (let [f (fn [& fns]
+            (fn [& xs]
+              (loop [vs xs, gs (reverse fns)]
+                (if (seq gs)
+                  (let [g (first gs)
+                        vs' (list (apply g vs))]
+                    (recur vs' (rest gs)))
+                  (first vs)))))
+        h (fn [& fns]
+            (fn [& xs]
+              (->> (reduce (fn [acc f]
+                             (list (apply f acc)))
+                           xs
+                           (reverse fns))
+                   first)))]
+    (is (all? (p58 h)))))
+
 (defn p61 [__]
   [(= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
    (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
