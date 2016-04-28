@@ -711,6 +711,22 @@
 (deftest t68
   (is (p68 [7 6 5 4 3])))
 
+;; Write a function that splits a sentence up into a sorted list of
+;; words. Capitalization should not affect sort order and punctuation
+;; should be ignored.
+(defn p70 [__]
+  [(= (__  "Have a nice day.")
+      ["a" "day" "Have" "nice"])
+   (= (__  "Clojure is a fun language!")
+      ["a" "Clojure" "fun" "is" "language"])
+   (= (__  "Fools fall for foolish follies.")
+      ["fall" "follies" "foolish" "Fools" "for"])])
+(deftest t70
+  (let [f (fn [s]
+            (->> (clojure.string/split s #"\W+")
+                 (sort-by clojure.string/lower-case)))]
+    (is (all? (p70 f)))))
+
 (defn p71 [__]
   (= (__ (sort (rest (reverse [2 5 4 1 3 6]))))
    (-> [2 5 4 1 3 6] (reverse) (rest) (sort) (__))
