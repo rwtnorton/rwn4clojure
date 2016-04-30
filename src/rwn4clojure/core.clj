@@ -785,6 +785,24 @@
 (deftest t72
   (is (p72 apply +)))
 
+;; Given a string of comma separated integers, write a function which
+;; returns a new comma separated string that only contains the numbers
+;; which are perfect squares.
+(defn p74 [__]
+  [(= (__ "4,5,6,7,8,9") "4,9")
+   (= (__ "15,16,25,36,37") "16,25,36")])
+(deftest t74
+  (let [f (fn [s]
+            (let [parse-int (fn [v] (Integer/parseInt v))
+                  perfect-square? (fn [n]
+                                    (let [r (int (Math/sqrt n))]
+                                      (= n (* r r))))]
+              (->> (clojure.string/split s #",\s*")
+                   (map parse-int)
+                   (filter perfect-square?)
+                   (clojure.string/join ","))))]
+    (is (all? (p74 f)))))
+
 (defn p77 [__]
   [(= (__ ["meat" "mat" "team" "mate" "eat"])
       #{#{"meat" "team" "mate"}})
