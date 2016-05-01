@@ -624,6 +624,53 @@
                 (apply g vs))))]
     (is (all? (p59 f)))))
 
+;; Write a function which behaves like reduce, but returns each
+;; intermediate value of the reduction. Your function must accept
+;; either two or three arguments, and the return sequence must be lazy.
+#_(defn p60 [__]
+  [#_(= (take 5 (__ + (range))) [0 1 3 6 10])
+   (= (__ conj [1] [2 3 4]) [[1] [1 2] [1 2 3] [1 2 3 4]])
+   (= (last (__ * 2 [3 4 5])) (reduce * 2 [3 4 5]) 120)])
+#_(deftest t60
+  (let [f' (fn f'
+            ([g ini vs]
+             (reduce (fn [acc v]
+                       (conj acc (g (last acc) v)))
+                     [ini]
+                     vs))
+            ([g vs]
+             (f g (first vs) (rest vs))))
+        f'' (fn f''
+            ([g ini vs]
+             (cons ini (f g vs)))
+            ([g vs]
+             (lazy-seq
+              (cons (g (first vs))
+                    (f'' g (rest vs))))))
+        f''' (fn f'''
+            ([g vs]
+             (iterate (fn [v]
+                        (g v))
+                      [vs []]))
+            ([g ini vs]
+             (cons ini (f''' g vs))))
+        f'''' (fn f''''
+            ([g vs]
+             (let [result (atom [])]
+               (map (fn [v]
+                      (if (seq @result)
+                        (swap! result conj (g (last @result) v))
+                        (swap! result conj (g v))))
+                    vs)
+               @result)))
+        f (fn f
+            ([g vs]
+             (loop [v vs, acc []]
+               (if v
+                 (conj acc (g (last acc) v))
+                 acc))))]
+    (is (all? (p60 f)))))
+
 (defn p61 [__]
   [(= (__ [:a :b :c] [1 2 3]) {:a 1, :b 2, :c 3})
    (= (__ [1 2 3 4] ["one" "two" "three"]) {1 "one", 2 "two", 3 "three"})
