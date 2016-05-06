@@ -802,6 +802,36 @@
 (deftest t68
   (is (p68 [7 6 5 4 3])))
 
+;; Write a function which takes a function f and a variable number of
+;; maps. Your function should return a map that consists of the rest
+;; of the maps conj-ed onto the first. If a key occurs in more than
+;; one map, the mapping(s) from the latter (left-to-right) should be
+;; combined with the mapping in the result by calling (f val-in-result
+;; val-in-latter)
+(defn p69 [__]
+  [(= (__ * {:a 2, :b 3, :c 4} {:a 2} {:b 2} {:c 5})
+      {:a 4, :b 6, :c 20})
+   (= (__ - {1 10, 2 20} {1 3, 2 10, 3 15})
+      {1 7, 2 10, 3 15})
+   (= (__ concat {:a [3], :b [6]} {:a [4 5], :c [8 9]} {:b [7]})
+      {:a [3 4 5], :b [6 7], :c [8 9]})])
+(deftest t69
+  (let [f (fn [g & ms]
+            (let [smoosh (fn [m1 m2]
+                           (let [ks (->> [m1 m2]
+                                         (map (comp set keys))
+                                         (apply clojure.set/union))]
+                             (->> (for [k ks]
+                                    (let [vs (->> [m1 m2]
+                                                  (map (fn [m] (get m k)))
+                                                  (filter identity))]
+                                      [k (if (== 1 (count vs))
+                                           (first vs)
+                                           (apply g vs))]))
+                                  (into {}))))]
+              (reduce smoosh ms)))]
+    (is (all? (p69 f)))))
+
 ;; Write a function that splits a sentence up into a sorted list of
 ;; words. Capitalization should not affect sort order and punctuation
 ;; should be ignored.
