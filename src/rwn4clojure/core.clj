@@ -952,6 +952,29 @@
                  set))]
     (is (all? (p77 f)))))
 
+;; Reimplement the function described in "Intro to Trampoline".
+(defn p78 [__]
+  [(= (letfn [(triple [x] #(sub-two (* 3 x)))
+              (sub-two [x] #(stop?(- x 2)))
+              (stop? [x] (if (> x 50) x #(triple x)))]
+        (__ triple 2))
+      82)
+   (= (letfn [(my-even? [x] (if (zero? x) true #(my-odd? (dec x))))
+              (my-odd? [x] (if (zero? x) false #(my-even? (dec x))))]
+        (map (partial __ my-even?) (range 6)))
+      [true false true false true false])])
+(deftest t78
+  (let [f (fn [g & vs]
+            (let [r (apply g vs)]
+              (if (fn? r)
+               (loop [g' r]
+                 (let [h (g')]
+                   (if (fn? h)
+                     (recur h)
+                     h)))
+               r)))]
+    (is (all? (p78 f)))))
+
 ;; A number is "perfect" if the sum of its divisors equal the number
 ;; itself. 6 is a perfect number because 1+2+3=6. Write a function
 ;; which returns true for perfect numbers and false otherwise.
