@@ -1300,6 +1300,31 @@
                    join)))]
     (is (all? (p102 f)))))
 
+;; Given an input sequence of keywords and numbers, create a map such
+;; that each key in the map is a keyword, and the value is a sequence
+;; of all the numbers (if any) between it and the next keyword in the
+;; sequence.
+(defn p105 [__]
+  [(= {} (__ []))
+   (= {:a [1]} (__ [:a 1]))
+   (= {:a [1], :b [2]} (__ [:a 1, :b 2]))
+   (= {:a [1 2 3], :b [], :c [4]} (__ [:a 1 2 3 :b :c 4]))])
+(deftest t105
+  (let [f (fn [xs]
+            (into {}
+                  (loop [acc [], xs xs]
+                       (if (seq xs)
+                         (let [k (first xs)
+                               xs (rest xs)
+                               vs (->> xs
+                                       (take-while (complement keyword?))
+                                       vec)
+                               xs' (drop-while (complement keyword?) xs)
+                               acc' (conj acc [k vs])]
+                           (recur acc' xs'))
+                         acc))))]
+    (is (all? (p105 f)))))
+
 (defn p107 [__]
   [(= 256 ((__ 2) 16),
       ((__ 8) 2))
