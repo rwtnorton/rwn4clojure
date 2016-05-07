@@ -1260,6 +1260,36 @@
               (reduce * (repeat exponent base))))]
     (is (all? (p107 f)))))
 
+;; A balanced number is one whose component digits have the same sum
+;; on the left and right halves of the number. Write a function which
+;; accepts an integer n, and returns true iff n is balanced.
+(defn p115 [__]
+  [(= true (__ 11))
+   (= true (__ 121))
+   (= false (__ 123))
+   (= true (__ 0))
+   (= false (__ 88099))
+   (= true (__ 89098))
+   (= true (__ 89089))
+   (= (take 20 (filter __ (range)))
+      [0 1 2 3 4 5 6 7 8 9 11 22 33 44 55 66 77 88 99 101])])
+(deftest t115
+  (let [->digits (fn [n]
+                   (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                        (take-while (fn [vs] (some (complement zero?) vs)))
+                        (map second)
+                        rest
+                        reverse
+                        (into [])))
+        f (fn [n]
+            (let [ds (->digits n)
+                  h (quot (count ds) 2)
+                  hd (take h ds)
+                  tl (->> ds rseq (take h))]
+              (= (apply +' hd)
+                 (apply +' tl))))]
+    (is (all? (p115 f)))))
+
 (defn p118 [__]
   [(= [3 4 5 6 7]
       (__ inc [2 3 4 5 6]))
