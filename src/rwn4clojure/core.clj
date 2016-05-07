@@ -1015,6 +1015,40 @@
                  (not-every? identity bs)))]
     (is (all? (p83 f)))))
 
+;; Happy numbers are positive integers that follow a particular formula:
+;; take each individual digit, square it, and then sum the squares to
+;; get a new number. Repeat with the new number and eventually, you
+;; might get to a number whose squared sum is 1. This is a happy number.
+;; An unhappy number (or sad number) is one that loops endlessly. Write
+;; a function that determines if a number is happy or not.
+(defn p86 [__]
+  [(= (__ 7) true)
+   (= (__ 986543210) true)
+   (= (__ 2) false)
+   (= (__ 3) false)])
+(deftest t86
+  (let [->digits (fn [n]
+                   (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                        (take-while (fn [vs] (some (complement zero?) vs)))
+                        (map second)
+                        rest
+                        reverse
+                        (into [])))
+        sumsq-of-digits (fn [n]
+                          (->> n
+                               ->digits
+                               (map (fn [x] (*' x x)))
+                               (apply +')))
+        f (fn [n]
+            (loop [x n, seen #{}]
+              (if (seen x)
+                false
+                (let [x' (sumsq-of-digits x)]
+                  (if (== 1 x')
+                    true
+                    (recur x' (conj seen x)))))))]
+    (is (all? (p86 f)))))
+
 (defn p88 [__]
   [(= (__ #{1 2 3 4 5 6} #{1 3 5 7}) #{2 4 6 7})
    (= (__ #{:a :b :c} #{}) #{:a :b :c})
