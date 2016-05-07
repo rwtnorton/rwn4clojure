@@ -1212,6 +1212,29 @@
               (nth pascal n)))]
     (is (all? (p97 f)))))
 
+;; A function f defined on a domain D induces an equivalence relation
+;; on D, as follows: a is equivalent to b with respect to f if and
+;; only if (f a) is equal to (f b). Write a function with arguments f
+;; and D that computes the equivalence classes of D with respect to
+;; f.
+(defn p98 [__]
+  [(= (__ #(* % %) #{-2 -1 0 1 2})
+      #{#{0} #{1 -1} #{2 -2}})
+   (= (__ #(rem % 3) #{0 1 2 3 4 5 })
+      #{#{0 3} #{1 4} #{2 5}})
+   (= (__ identity #{0 1 2 3 4})
+      #{#{0} #{1} #{2} #{3} #{4}})
+   (= (__ (constantly true) #{0 1 2 3 4})
+      #{#{0 1 2 3 4}})])
+(deftest t98
+  (let [f (fn [g d]
+            (->> d
+                 (group-by g)
+                 vals
+                 (map set)
+                 (into #{})))]
+    (is (all? (p98 f)))))
+
 (defn p99 [__]
   [(= (__ 1 1) [1])
    (= (__ 99 9) [8 9 1])
