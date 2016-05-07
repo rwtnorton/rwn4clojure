@@ -1135,6 +1135,33 @@
               (/ product g)))]
     (is (all? (p100 f)))))
 
+;; When working with java, you often need to create an object with
+;; fieldsLikeThis, but you'd rather work with a hashmap that has
+;; :keys-like-this until it's time to convert. Write a function which
+;; takes lower-case hyphen-separated strings and converts them to
+;; camel-case strings.
+(defn p102 [__]
+  [(= (__ "something") "something")
+   (= (__ "multi-word-key") "multiWordKey")
+   (= (__ "leaveMeAlone") "leaveMeAlone")])
+(deftest t102
+  (let [f (fn [s]
+            (let [join (partial clojure.string/join "")
+                  uc clojure.string/upper-case
+                  ucfirst (fn [[c & cs :as s']]
+                            (if (seq s')
+                              (->> cs
+                                   (apply str)
+                                   (into [(uc c)])
+                                   join)
+                              s'))
+                  [w & ws] (clojure.string/split s #"-+")]
+              (->> ws
+                   (map ucfirst)
+                   (into [w])
+                   join)))]
+    (is (all? (p102 f)))))
+
 (defn p107 [__]
   [(= 256 ((__ 2) 16),
       ((__ 8) 2))
