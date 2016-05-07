@@ -1038,6 +1038,34 @@
                  (not-every? identity bs)))]
     (is (all? (p83 f)))))
 
+;; Write a function which generates the power set of a given set. The
+;; power set of a set x is the set of all subsets of x, including the
+;; empty set and x itself.
+(defn p85 [__]
+  [(= (__ #{1 :a}) #{#{1 :a} #{:a} #{} #{1}})
+   (= (__ #{}) #{#{}})
+   (= (__ #{1 2 3})
+      #{#{} #{1} #{2} #{3} #{1 2} #{1 3} #{2 3} #{1 2 3}})
+   (= (count (__ (into #{} (range 10)))) 1024)])
+(deftest t85
+  (let [bits->indices (fn [n]
+                        (loop [x n, acc [], i 0]
+                          (if (zero? x)
+                            acc
+                            (let [q (quot x 2)
+                                  r (rem x 2)
+                                  acc' (if (= 1 r) (conj acc i) acc)]
+                              (recur q acc' (inc i))))))
+        f (fn [u]
+            (let [n (apply *' (repeat (count u) 2))
+                  v (vec u)]
+              (->> (for [b (range n)]
+                     (let [idxs (bits->indices b)]
+                       (->> (map (partial nth v) idxs)
+                            (into #{}))))
+                   (into #{}))))]
+    (is (all? (p85 f)))))
+
 ;; Happy numbers are positive integers that follow a particular formula:
 ;; take each individual digit, square it, and then sum the squares to
 ;; get a new number. Repeat with the new number and eventually, you
