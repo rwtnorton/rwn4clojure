@@ -880,6 +880,36 @@
                    (clojure.string/join ","))))]
     (is (all? (p74 f)))))
 
+;; Two numbers are coprime if their greatest common divisor equals 1.
+;; Euler's totient function f(x) is defined as the number of positive
+;; integers less than x which are coprime to x. The special case f(1)
+;; equals 1. Write a function which calculates Euler's totient function.
+(defn p75 [__]
+  [(= (__ 1) 1)
+   (= (__ 10) (count '(1 3 7 9)) 4)
+   (= (__ 40) 16)
+   (= (__ 99) 60)])
+(deftest t75
+ (let [gcd (fn [& nums]
+             (let [[big lil] (sort > nums)]
+               (loop [a big
+                      b lil]
+                 (let [q (quot a b)
+                       r (rem a b)]
+                   (if (zero? r)
+                     b
+                     (recur b r))))))
+       coprime? (fn [n1 n2]
+                  (== 1 (gcd n1 n2)))
+       f (fn [n]
+           {:pre [(pos? n)]}
+           (if (== 1 n)
+             1
+             (->> (range 1 n)
+                  (filter (partial coprime? n))
+                  count)))]
+   (is (all? (p75 f)))))
+
 ;; The trampoline function takes a function f and a variable number
 ;; of parameters. Trampoline calls f with any parameters that were
 ;; supplied. If f returns a function, trampoline calls that function
