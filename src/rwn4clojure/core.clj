@@ -1757,6 +1757,35 @@
                  (map reverse)))]
     (is (all? (p157 f)))))
 
+;; Write a function that accepts a curried function of unknown arity
+;; n. Return an equivalent function of n arguments.  You may wish to
+;; read https://en.wikipedia.org/wiki/Currying.
+(defn p158 [__]
+  [(= 10 ((__ (fn [a]
+                (fn [b]
+                  (fn [c]
+                    (fn [d]
+                      (+ a b c d))))))
+          1 2 3 4))
+   (= 24 ((__ (fn [a]
+                (fn [b]
+                  (fn [c]
+                    (fn [d]
+                      (* a b c d))))))
+          1 2 3 4))
+   (= 25 ((__ (fn [a]
+                (fn [b]
+                  (* a b))))
+          5 5))])
+(deftest t158
+  (let [f (fn [g]
+            (fn [& args]
+              (reduce (fn [acc v]
+                        (acc v))
+                      g
+                      args)))]
+    (is (all? (p158 f)))))
+
 ;; Set A is a subset of set B, or equivalently B is a superset of A,
 ;; if A is "contained" inside B. A and B may coincide.
 (defn p161 [__]
