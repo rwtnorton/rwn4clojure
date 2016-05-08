@@ -1108,6 +1108,27 @@
                [x y])))]
     (is (all? (p90 f)))))
 
+;; Write a function which flattens any nested combination of sequential
+;; things (lists, vectors, etc.), but maintains the lowest level
+;; sequential items. The result should be a sequence of sequences with
+;; only one level of nesting.
+(defn p93 [__]
+  [(= (__ [["Do"] ["Nothing"]])
+      [["Do"] ["Nothing"]])
+   (= (__ [[[[:a :b]]] [[:c :d]] [:e :f]])
+      [[:a :b] [:c :d] [:e :f]])
+   (= (__ '((1 2)((3 4)((((5 6)))))))
+      '((1 2)(3 4)(5 6)))])
+(deftest t93
+  (let [f (fn [vs]
+            (let [good? (fn [x]
+                          (and (sequential? x)
+                               (->> x first sequential? not)))]
+              (->> vs
+                   (tree-seq sequential? seq)
+                   (filter good?))))]
+    (is (all? (p93 f)))))
+
 (defn p95 [__]
   [(= (__ '(:a (:b nil nil) nil))
       true)
