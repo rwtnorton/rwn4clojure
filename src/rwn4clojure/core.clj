@@ -1588,6 +1588,26 @@
                  (apply +')))]
     (is (all? (p143 f)))))
 
+;; Write an oscillating iterate: a function that takes an initial value
+;; and a variable number of functions. It should return a lazy sequence
+;; of the functions applied to the value in order, restarting from the
+;; first function after it hits the end.
+(defn p144 [__]
+  [(= (take 3 (__ 3.14 int double))
+      [3.14 3 3.0])
+   (= (take 5 (__ 3 #(- % 3) #(+ 5 %)))
+      [3 0 5 2 7])
+   (= (take 12 (__ 0 inc dec inc dec inc))
+      [0 1 0 1 0 1 2 1 2 1 2 3])])
+(deftest t144
+  (let [f (fn [v & gs]
+            (let [foo (fn [[x fns]]
+                        (let [a-fn (first fns)]
+                          [(a-fn x) (rest fns)]))]
+              (->> (iterate foo [v (cycle gs)])
+                   (map first))))]
+    (is (all? (p144 f)))))
+
 (defn p145 [__]
   [(= __ (for [x (range 40)
             :when (= 1 (rem x 4))]
