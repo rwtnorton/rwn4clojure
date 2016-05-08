@@ -1312,6 +1312,38 @@
               (reduce * (repeat exponent base))))]
     (is (all? (p107 f)))))
 
+;; Given any number of sequences, each sorted from smallest to largest,
+;; find the smallest single number which appears in all of the sequences.
+;; The sequences may be infinite, so be careful to search lazily.
+(defn p108 [__]
+  [(= 3 (__ [3 4 5]))
+   (= 4 (__ [1 2 3 4 5 6 7] [0.5 3/2 4 19]))
+   (= 7 (__ (range) (range 0 100 7/6) [2 3 5 7 11 13]))
+   (= 64 (__ (map #(* % % %) (range))                      ;; perfect cubes
+             (filter #(zero? (bit-and % (dec %))) (range)) ;; powers of 2
+             (iterate inc 20)))                  ;; at least as large as 20
+   ])
+(deftest t108
+  (let [f (fn [& vss]
+            (if (== 1 (count vss))
+              (ffirst vss)
+              (loop [xss vss]
+                (if (every? seq xss)
+                  (if (apply = (map first xss))
+                    (ffirst xss)
+                    (let [grp (group-by first xss)
+                          ks (sort (keys grp))
+                          [k t] ks
+                          rss (->> (dissoc grp k)
+                                   vals
+                                   (apply concat))]
+                      (recur
+                       (into rss (map (fn [xs]
+                                        (drop-while #(< % t) xs))
+                                      (grp k))))))
+                  nil))))]
+    (is (all? (p108 f)))))
+
 ;; Write a function that returns a lazy sequence of "pronunciations"
 ;; of a sequence of numbers. A pronunciation of each element in the
 ;; sequence consists of the number of repeating identical numbers and
