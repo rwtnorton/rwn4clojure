@@ -1573,6 +1573,46 @@
                :rank (char->rank r)}))]
     (is (all? (p128 f)))))
 
+;; Write a function that takes a two-argument predicate, a value, and
+;; a collection; and returns a new collection where the value is
+;; inserted between every two items that satisfy the predicate.
+(defn p132 [__]
+  [(= '(1 :less 6 :less 7 4 3) (__ < :less [1 6 7 4 3]))
+   (= '(2) (__ > :more [2]))
+   (= [0 1 :x 2 :x 3 :x 4] (__ #(and (pos? %) (< % %2)) :x (range 5)))
+   (empty? (__ > :more ()))
+   (= [0 1 :same 1 2 3 :same 5 8 13 :same 21]
+      (take 12 (->> [0 1]
+                    (iterate (fn [[a b]] [b (+ a b)]))
+                    (map first) ; fibonacci numbers
+                    (__ (fn [a b] ; both even or both odd
+                          (= (mod a 2) (mod b 2)))
+                        :same))))])
+(deftest t132
+  (let [f (fn [p x vs]
+            (if-not (seq vs)
+              vs
+              (->> vs
+                   (partition-all 2 1)
+                   (mapcat (fn [[a b :as entry]]
+                             (if (= 1 (count entry))
+                               [a]
+                               (if (p a b)
+                                 [a x]
+                                 [a])))))))
+        #_(fn [p x vs]
+            (if (seq vs)
+             (conj
+              (reduce (fn [acc [a b]]
+                        (if (p a b)
+                          (conj acc a x)
+                          (conj acc a)))
+                      []
+                      (map vector vs (rest vs)))
+              (last vs))
+             vs))]
+    (is (all? (p132 f)))))
+
 ;; Write a function which, given a key and map, returns true
 ;; iff the map contains an entry with that key and its value is nil.
 (defn p134 [__]
