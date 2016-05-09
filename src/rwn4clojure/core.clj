@@ -1297,6 +1297,62 @@
                    join)))]
     (is (all? (p102 f)))))
 
+;; This is the inverse of Problem 92, but much easier. Given an integer
+;; smaller than 4000, return the corresponding roman numeral in
+;; uppercase, adhering to the subtractive principle
+;; (http://www.numericana.com/answer/roman.htm#valid).
+(defn p104 [__]
+  [(= "I" (__ 1))
+   (= "XXX" (__ 30))
+   (= "IV" (__ 4))
+   (= "CXL" (__ 140))
+   (= "DCCCXXVII" (__ 827))
+   (= "MMMCMXCIX" (__ 3999))
+   (= "XLVIII" (__ 48))])
+;; digit   10^3         10^2    10^1    10^0
+;;     1   M            C       X       I
+;;     2   MM           CC      XX      II
+;;     3   MMM          CCC     XXX     III
+;;     4   MMMM         CD      XL      IV
+;;     5   MMMMM        D       L       V
+;;     6   MMMMMM       DC      LX      VI
+;;     7   MMMMMMM      DCC     LXX     VII
+;;     8   MMMMMMMM     DCCC    LXXX    VIII
+;;     9   MMMMMMMMM    CM      XC      IX
+(deftest t104
+  (let [powers (map #(apply * (repeat % 10)) (reverse (range 4)))
+        powahs (partial zipmap powers)
+        lookup (->> [["M" "C" "X" "I"]
+                     ["MM" "CC" "XX" "II"]
+                     ["MMM" "CCC" "XXX" "III"]
+                     ["MMMM" "CD" "XL" "IV"]
+                     ["MMMMM" "D" "L" "V"]
+                     ["MMMMMM" "DC" "LX" "VI"]
+                     ["MMMMMMM" "DCC" "LXX" "VII"]
+                     ["MMMMMMMM" "DCCC" "LXXX" "VIII"]
+                     ["MMMMMMMMM" "CM" "XC" "IX"]]
+                    (map (fn [i vs] [i (powahs vs)])
+                         (rest (range)))
+                    (into {}))
+        ->digits (fn [n]
+                   (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                        (take-while (fn [vs] (some (complement zero?) vs)))
+                        (map second)
+                        rest
+                        reverse
+                        (into [])))
+        f (fn [n]
+            (let [digits (->digits n)
+                  places (->> (count digits)
+                              range
+                              reverse
+                              (map #(apply * (repeat % 10))))]
+              (->> (map vector digits places)
+                   (remove (fn [[d _]] (zero? d)))
+                   (map (fn [ks] (get-in lookup ks)))
+                   (apply str))))]
+    (is (all? (p104 f)))))
+
 ;; Given an input sequence of keywords and numbers, create a map such
 ;; that each key in the map is a keyword, and the value is a sequence
 ;; of all the numbers (if any) between it and the next keyword in the
