@@ -1297,6 +1297,51 @@
                    join)))]
     (is (all? (p102 f)))))
 
+;; Given a sequence S consisting of n elements generate all k-combinations
+;; of S, i. e. generate all possible sets consisting of k distinct
+;; elements taken from S. The number of k-combinations for a sequence
+;; is equal to the binomial coefficient.
+(defn p103 [__]
+  [(= (__ 1 #{4 5 6}) #{#{4} #{5} #{6}})
+   (= (__ 10 #{4 5 6}) #{})
+   (= (__ 2 #{0 1 2}) #{#{0 1} #{0 2} #{1 2}})
+   (= (__ 3 #{0 1 2 3 4})
+      #{#{0 1 2} #{0 1 3} #{0 1 4} #{0 2 3} #{0 2 4}
+        #{0 3 4} #{1 2 3} #{1 2 4} #{1 3 4} #{2 3 4}})
+   (= (__ 4 #{[1 2 3] :a "abc" "efg"})
+      #{#{[1 2 3] :a "abc" "efg"}})
+   (= (__ 2 #{[1 2 3] :a "abc" "efg"})
+      #{#{[1 2 3] :a} #{[1 2 3] "abc"} #{[1 2 3] "efg"}
+        #{:a "abc"} #{:a "efg"} #{"abc" "efg"}})])
+(deftest t103
+  (let [k-bits (fn [k upper]
+                 (->> (range upper)
+                      (map (fn [n]
+                             (let [fq (->> n
+                                           Integer/toBinaryString
+                                           seq
+                                           frequencies)]
+                              [n (fq \1)])))
+                      (filter (fn [[_ ones]] (= ones k)))
+                      (map first)))
+        bits->indices (fn [n]
+                        (loop [x n, acc [], i 0]
+                          (if (zero? x)
+                            acc
+                            (let [q (quot x 2)
+                                  r (rem x 2)
+                                  acc' (if (= 1 r) (conj acc i) acc)]
+                              (recur q acc' (inc i))))))
+        f (fn [k vs]
+            (let [upper (apply *' (repeat (count vs) 2))
+                  xs (vec vs)]
+              (->> (for [b (k-bits k upper)]
+                     (let [idxs (bits->indices b)]
+                       (->> (map (partial nth xs) idxs)
+                            (into #{}))))
+                   (into #{}))))]
+    (is (all? (p103 f)))))
+
 ;; This is the inverse of Problem 92, but much easier. Given an integer
 ;; smaller than 4000, return the corresponding roman numeral in
 ;; uppercase, adhering to the subtractive principle
