@@ -1553,6 +1553,36 @@
                  (apply +' tl))))]
     (is (all? (p115 f)))))
 
+;; A balanced prime is a prime number which is also the mean of the
+;; primes directly before and after it in the sequence of valid primes.
+;; Create a function which takes an integer n, and returns true iff
+;; it is a balanced prime.
+(defn p116 [__]
+  [(= false (__ 4))
+   (= true (__ 563))
+   (= 1103 (nth (filter __ (range)) 15))])
+(deftest t116
+  (let [prime? (fn [n]
+                 (let [m (->> n Math/sqrt long)
+                       multiple? (fn [x]
+                                   (zero? (mod n x)))]
+                   (if (< n 2)
+                     false
+                     (->> (range 2 (inc m))
+                          (not-any? multiple?)))))
+        primes (filter prime? (range))
+        mean (fn [vs]
+               (/ (apply +' vs) (count vs)))
+        f (fn [n]
+            (let [ps (take-while #(<= % n) primes)]
+              (and (= n (last ps))
+                   (->> primes
+                        (drop (- (count ps) 2))
+                        (take 3)
+                        mean
+                        (= n)))))]
+    (is (all? (p116 f)))))
+
 (defn p118 [__]
   [(= [3 4 5 6 7]
       (__ inc [2 3 4 5 6]))
