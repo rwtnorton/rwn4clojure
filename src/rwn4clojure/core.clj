@@ -1945,6 +1945,33 @@
               (iterate successor vs)))]
     (is (all? (p147 f)))))
 
+;; Write a function which calculates the sum of all natural numbers
+;; under n (first argument) which are evenly divisible by at least one
+;; of a and b (second and third argument). Numbers a and b are guaranteed
+;; to be coprimes.
+;;
+;; Note: Some test cases have a very large n, so the most obvious
+;; solution will exceed the time limit.
+(defn p148 [__]
+  [(= 0 (__ 3 17 11))
+   (= 23 (__ 10 3 5))
+   (= 233168 (__ 1000 3 5))
+   (= "2333333316666668" (str (__ 100000000 3 5)))
+   (= "110389610389889610389610"
+      (str (__ (* 10000 10000 10000) 7 11)))
+   (= "1277732511922987429116"
+      (str (__ (* 10000 10000 10000) 757 809)))
+   (= "4530161696788274281"
+      (str (__ (* 10000 10000 1000) 1597 3571)))])
+(deftest t148
+  (let [n-sum (fn [n] (/ (*' n (inc' n)) 2))
+        m-sum (fn [n m]
+                (*' m (n-sum (quot (dec n) m))))
+        f (fn [n a b]
+            (-' (+' (m-sum n a) (m-sum n b))
+                (m-sum n (*' a b))))]
+    (is (all? (p148 f)))))
+
 ;; Given a set of sets, create a function which returns true if no two
 ;; of those sets have any elements in common1 and false otherwise.
 ;; Some of the test cases are a bit tricky, so pay a little more
