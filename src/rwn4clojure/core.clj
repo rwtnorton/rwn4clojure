@@ -1739,6 +1739,62 @@
                :rank (char->rank r)}))]
     (is (all? (p128 f)))))
 
+;; Given a variable number of sets of integers, create a function which
+;; returns true iff all of the sets have a non-empty subset with an
+;; equivalent summation.
+(defn p131 [__]
+  [(= true  (__ #{-1 1 99}
+                #{-2 2 888}
+                #{-3 3 7777})) ; ex. all sets have a subset which sums to zero
+   (= false (__ #{1}
+                #{2}
+                #{3}
+                #{4}))
+   (= true  (__ #{1}))
+   (= false (__ #{1 -3 51 9}
+                #{0}
+                #{9 2 81 33}))
+   (= true  (__ #{1 3 5}
+                #{9 11 4}
+                #{-3 12 3}
+                #{-3 4 -2 10}))
+   (= false (__ #{-1 -2 -3 -4 -5 -6}
+                #{1 2 3 4 5 6 7 8 9}))
+   (= true  (__ #{1 3 5 7}
+                #{2 4 6 8}))
+   (= true  (__ #{-1 3 -5 7 -9 11 -13 15}
+                #{1 -3 5 -7 9 -11 13 -15}
+                #{1 -1 2 -2 4 -4 8 -8}))
+   (= true  (__ #{-10 9 -8 7 -6 5 -4 3 -2 1}
+                #{10 -9 8 -7 6 -5 4 -3 2 -1}))])
+(deftest t131
+ (let [bits->indices (fn [n]
+                       (loop [x n, acc [], i 0]
+                         (if (zero? x)
+                           acc
+                           (let [q (quot x 2)
+                                 r (rem x 2)
+                                 acc' (if (= 1 r) (conj acc i) acc)]
+                             (recur q acc' (inc i))))))
+       power-set (fn [u]
+                   (let [n (apply *' (repeat (count u) 2))
+                         v (vec u)]
+                     (->> (for [b (range n)]
+                            (let [idxs (bits->indices b)]
+                              (->> (map (partial nth v) idxs)
+                                   (into #{}))))
+                          (into #{}))))
+       f (fn [& the-sets]
+           (->> (for [a-set the-sets]
+                  (->> a-set
+                       power-set
+                       (remove empty?)
+                       (map (partial reduce +' 0))
+                       (into #{})))
+                (apply clojure.set/intersection)
+                ((complement empty?))))]
+   (is (all? (p131 f)))))
+
 ;; Write a function that takes a two-argument predicate, a value, and
 ;; a collection; and returns a new collection where the value is
 ;; inserted between every two items that satisfy the predicate.
