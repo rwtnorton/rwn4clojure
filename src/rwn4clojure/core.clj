@@ -1495,6 +1495,44 @@
                  rest))]
     (is (all? (p110 f)))))
 
+;; Create a function which takes an integer and a nested collection
+;; of integers as arguments. Analyze the elements of the input collection
+;; and return a sequence which maintains the nested structure, and
+;; which includes all elements starting from the head whose sum is
+;; less than or equal to the input integer.
+#_(defn p112 [__]
+  [(=  (__ 10 [1 2 [3 [4 5] 6] 7])
+       '(1 2 (3 (4))))
+   (=  (__ 30 [1 2 [3 [4 [5 [6 [7 8]] 9]] 10] 11])
+       '(1 2 (3 (4 (5 (6 (7)))))))
+   (=  (__ 9 (range))
+       '(0 1 2 3))
+   (=  (__ 1 [[[[[1]]]]])
+       '(((((1))))))
+   (=  (__ 0 [1 2 [3 [4 5] 6] 7])
+       '())
+   (=  (__ 0 [0 0 [0 [0]]])
+       '(0 0 (0 (0))))
+   (=  (__ 1 [-10 [1 [2 3 [4 5 [6 7 [8]]]]]])
+       '(-10 (1 (2 3 (4)))))])
+#_(deftest t112
+  (let [clone* (fn clone*
+                 ([node] (clone* node 0))
+                 ([node sum]
+                  (if-not (sequential? node)
+                    (let [v (if (map? node) (:node node) node)]
+                      (prn [:v v, :sum sum, :node node])
+                      {:node v, :sum (+' sum v)})
+                    (if-not (seq node)
+                      ()
+                      (map (fn [n] (clone* n sum)) node)))))
+        f (fn [m tree]
+            (loop [n m, acc ()]
+              (if (neg? n)
+                acc
+                )))]
+    (is (all? (p112 f)))))
+
 ;; take-while is great for filtering sequences, but it limited: you
 ;; can only examine a single item of the sequence at a time. What if
 ;; you need to keep track of some state as you go over the sequence?
