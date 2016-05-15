@@ -2111,6 +2111,96 @@
                 (m-sum n (*' a b))))]
     (is (all? (p148 f)))))
 
+;; A palindromic number is a number that is the same when written
+;; forwards or backwards (e.g., 3, 99, 14341).
+;;
+;; Write a function which takes an integer n, as its only argument,
+;; and returns an increasing lazy sequence of all palindromic numbers
+;; that are not less than n.
+;;
+;; The most simple solution will exceed the time limit!
+(defn p150 [__]
+  [(= (take 26 (__ 0))
+      [0 1 2 3 4 5 6 7 8 9
+       11 22 33 44 55 66 77 88 99
+       101 111 121 131 141 151 161])
+   (= (take 16 (__ 162))
+      [171 181 191 202
+       212 222 232 242
+       252 262 272 282
+       292 303 313 323])
+   (= (take 6 (__ 1234550000))
+      [1234554321 1234664321 1234774321
+       1234884321 1234994321 1235005321])
+   (= (first (__ (* 111111111 111111111)))
+      (* 111111111 111111111))
+   (= (set (take 199 (__ 0)))
+      (set (map #(first (__ %)) (range 0 10000))))
+   (= true
+      (apply < (take 6666 (__ 9999999))))
+   (= (nth (__ 0) 10101)
+      9102019)])
+(deftest t150
+  (let [pow10 (fn [n] (apply *' (repeat n 10)))
+        num-digits (fn [n] (->> n inc Math/log10 Math/ceil int))
+        ->digits (fn [n]
+                   (->> (iterate (fn [[q r]] [(quot q 10) (rem q 10)]) [n])
+                        (take-while (fn [vs] (some (complement zero?) vs)))
+                        (map second)
+                        rest
+                        reverse
+                        (into [])))
+        digit-at (fn [n i]
+                   (-> n
+                       (quot (pow10 i))
+                       (rem 10)))
+        left-digits (fn [n]
+                      (let [cnt (num-digits n)
+                            h (quot cnt 2)]
+                        (quot n (pow10 h))))
+        flip-digits (fn [n]
+                      (->> n
+                           ->digits
+                           (map-indexed vector)
+                           (reduce (fn [acc [p d]]
+                                     (+' acc (*' d (pow10 p))))
+                                   0)))
+        mirror-digits (fn [lhs & [skip-middle?]]
+                        (let [cnt (num-digits lhs)
+                              m (if skip-middle? (dec cnt) cnt)
+                              base (*' lhs (pow10 m))
+                              v (if skip-middle?
+                                  (quot lhs 10)
+                                  lhs)]
+                          (+' base (flip-digits v))))
+        pal? (fn [n]
+               (let [cnt (num-digits n)]
+                 (every? (fn [i]
+                           (= (digit-at n i)
+                              (digit-at n (- cnt i 1))))
+                         (range (quot cnt 2)))))
+        all-9? (fn [x]
+                 (->> x
+                      ->digits
+                      (every? #(= 9 %))))
+        pal-inc (fn [x]
+                  (if (or (< x 10) (not (pal? x)))
+                    (inc x)
+                    (let [cnt (num-digits x)
+                          lhs (left-digits x)
+                          nines? (all-9? x)
+                          lhs (if (and nines? (odd? cnt))
+                                (quot lhs 10)
+                                lhs)]
+                      (mirror-digits (inc' lhs)
+                                     (if nines?
+                                       (even? cnt)
+                                       (odd? cnt))))))
+        f (fn [n]
+            (->> (iterate pal-inc n)
+                 (filter pal?)))]
+    (is (all? (p150 f)))))
+
 ;; Given a set of sets, create a function which returns true if no two
 ;; of those sets have any elements in common1 and false otherwise.
 ;; Some of the test cases are a bit tricky, so pay a little more
